@@ -3,15 +3,16 @@ import './App.css';
 import {Button} from "./components/Button";
 import {Scoreboard} from "./components/Scoreboard";
 import {useDispatch, useSelector} from "react-redux";
-import {increaseValue, setMax, setMin} from "./store/counter-reducer";
+import {getFromLocal, increaseValue, setMax, setMin, setToLocal} from "./store/counter-reducer";
 import {rootState} from "./store/store";
 
 function App() {
 
-    const dispatch= useDispatch()
-    useEffect(() => {
+    const dispatch = useDispatch()
 
-    })
+    useEffect(() => {
+        dispatch(getFromLocal())
+    }, [])
     const {score, min, max} = useSelector((state: rootState) => state.counter)
 
     const setScore = (value: number) => dispatch(setMin(value))
@@ -35,13 +36,17 @@ function App() {
                         <Button disable={score <= min} callBack={resetHandler} title={'reset'}/>
                     </div>
                     <div className="button-container input">
-                        <input type="number" size={2} name="minValue" onChange={(e) => {dispatch(setMin(+e.currentTarget.value))}}  value={min}/>
+                        <input type="number" size={2} name="minValue" onChange={(e) => {
+                            dispatch(setMin(+e.currentTarget.value))
+                        }} value={min}/>
                         <label htmlFor="minValue">min</label>
 
-                        <input type="number" size={2} name="maxValue" onChange={(e) => {dispatch(setMax(+e.currentTarget.value))}}  value={max}/>
+                        <input autoFocus type="number" size={2} name="maxValue" onChange={(e) => {
+                            dispatch(setMax(+e.currentTarget.value))
+                        }} value={max}/>
                         <label htmlFor="maxValue">max</label>
                     </div>
-                    <Button callBack={() => setScore} title={"set"} disable={false}/>
+                    <Button callBack={() => dispatch(setToLocal({score, min, max})) } title={"set"} disable={false}/>
                 </div>
             </header>
         </div>
